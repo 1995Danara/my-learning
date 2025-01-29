@@ -1,6 +1,7 @@
 import { useState } from "react"
+import { Counter } from "../counter/Counter"
 
-export const CounterButton = () => {
+export const DishCounter = () => {
   const [count, setCount] = useState(0)
 
   const onIncrement = () => {
@@ -15,10 +16,10 @@ export const CounterButton = () => {
     }
   }
   return (
-    <div>
-      <button onClick={onIncrement}>+</button>
-      <span>{count}</span>
-      <button onClick={onDecrement}>-</button>
-    </div>
+    <Counter
+      count={count}
+      onIncrement={onIncrement}
+      onDecrement={onDecrement}
+    />
   )
 }

@@ -1,31 +1,35 @@
 import { useState } from "react"
 
 import { restaurants } from "../mock"
-import { CounterButton } from "../counter/CounterButton"
-export const Restaurants = () => {
-  const [activeRestaurantIndex, setActiveRestaurantIndex] = useState(0)
+import { Reviews } from "../reviews/Reviews"
+import { Menu } from "../menu/Menu"
+import { ReviewsForm } from "../reviewsform/ReviewsForm"
+import { DishCounter } from "../dishcounter/DishCounter"
 
-  const handleTabClick = (index) => {
-    if (index !== activeRestaurantIndex) {
-      setActiveRestaurantIndex(index)
+export const Restaurants = () => {
+  const [activeRestaurantId, setActiveRestaurantId] = useState(
+    restaurants[0]?.id,
+  )
+
+  const activeRestaurant = restaurants.find(
+    (restaurant) => restaurant.id === activeRestaurantId,
+  )
+
+  const handleTabClick = (id) => {
+    if (id !== activeRestaurantId) {
+      setActiveRestaurantId(id)
     }
   }
-
   return (
     <div>
-      <div
-        style={{
-          display: "flex",
-          marginBottom: "30px",
-        }}
-      >
-        {restaurants.map((restaurant, index) => (
+      <div style={{ display: "flex", marginBottom: "30px" }}>
+        {restaurants.map((restaurant, id) => (
           <button
             key={restaurant.id}
-            onClick={() => handleTabClick(index)}
+            onClick={() => handleTabClick(restaurant.id)}
             style={{
               backgroundColor:
-                index === activeRestaurantIndex ? "#ccc" : "transparent",
+                id === activeRestaurantId ? "#ccc" : "transparent",
               border: "1px solid #ccc",
               padding: "10px",
               cursor: "pointer",
@@ -36,39 +40,15 @@ export const Restaurants = () => {
           </button>
         ))}
       </div>
-      <div>
-        {restaurants[activeRestaurantIndex] && (
-          <div style={{ marginBottom: "20px" }}>
-            <h1>{restaurants[activeRestaurantIndex].name}</h1>
-            <h2>Меню</h2>
-            <ul>
-              {restaurants[activeRestaurantIndex].menu.map((dish) => (
-                <li
-                  key={dish.id}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    marginTop: "5px",
-                  }}
-                >
-                  <div style={{ marginRight: "5px" }}>
-                    {dish.name} - ${dish.price}
-                  </div>
-                  <CounterButton />
-                </li>
-              ))}
-            </ul>
-            <h3>Отзывы</h3>
-            <ul>
-              {restaurants[activeRestaurantIndex].reviews.map((review) => (
-                <li key={review.id}>
-                  <strong>{review.user}:</strong> {review.text}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
+      {activeRestaurant && (
+        <div style={{ marginBottom: "20px" }}>
+          <h1>{activeRestaurant.name}</h1>
+          <Menu menu={activeRestaurant.menu} />
+          <DishCounter />
+          <Reviews reviews={activeRestaurant.reviews} />
+          <ReviewsForm />
+        </div>
+      )}
     </div>
   )
 }
