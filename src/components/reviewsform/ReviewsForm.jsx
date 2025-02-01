@@ -1,5 +1,7 @@
 import { useReducer } from "react"
 import { Counter } from "../counter/Counter"
+import styles from "./styles.module.scss"
+
 const INITIAL_VALUE = {
   name: "",
   text: "",
@@ -58,14 +60,8 @@ export const ReviewsForm = () => {
   const { name, text, rating } = form
 
   return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: "10px",
-      }}
-    >
-      <div>
+    <div className={styles.formContainer}>
+      <div className={styles.inputGroup}>
         <span>Name</span>
         <input
           type="text"
@@ -73,7 +69,8 @@ export const ReviewsForm = () => {
           onChange={(event) => setName(event.target.value)}
         />
       </div>
-      <div>
+
+      <div className={styles.inputGroup}>
         <span>Text</span>
         <input
           type="text"
@@ -81,24 +78,21 @@ export const ReviewsForm = () => {
           onChange={(event) => setText(event.target.value)}
         />
       </div>
+
       <div>
         <span>Rating</span>
-        <div style={{ display: "flex", gap: "5px", alignItems: "center" }}>
+        <div className={styles.ratingContainer}>
           <Counter
             count={rating}
             onDecrement={setRatingDecrement}
             onIncrement={setRatingIncrement}
           />
         </div>
-        <div>
-          <button
-            onClick={clearForm}
-            style={{ padding: "10px 10px", color: "black" }}
-          >
-            Clear
-          </button>
-        </div>
       </div>
+
+      <button onClick={clearForm} className={styles.clearButton}>
+        Clear
+      </button>
     </div>
   )
 }
