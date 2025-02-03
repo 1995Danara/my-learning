@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { Counter } from "../counter/Counter"
+import styles from "./styles.module.scss"
 
 export const DishCounter = () => {
   const [count, setCount] = useState(0)
@@ -15,11 +16,14 @@ export const DishCounter = () => {
       setCount(count - 1)
     }
   }
+
   return (
-    <Counter
-      count={count}
-      onIncrement={onIncrement}
-      onDecrement={onDecrement}
-    />
+    <div className={styles.counterContainer}>
+      <Counter
+        count={count}
+        onIncrement={onIncrement}
+        onDecrement={onDecrement}
+      />
+    </div>
   )
 }

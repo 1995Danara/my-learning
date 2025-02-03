@@ -1,0 +1,10 @@
+.container {
+  display: flex;
+}
+.scrollProgressBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 4px;
+  background-color: black;
+}
