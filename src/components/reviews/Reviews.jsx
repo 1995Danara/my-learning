@@ -1,10 +1,12 @@
+import styles from "./styles.module.scss"
+
 export const Reviews = ({ reviews }) => (
-  <div>
-    <h3>Reviews</h3>
-    <ul>
+  <div className={styles.reviewsContainer}>
+    <h3 className={styles.reviewsTitle}>Reviews</h3>
+    <ul className={styles.reviewsList}>
       {reviews.map((review) => (
-        <li key={review.id}>
-          <strong>{review.user}:</strong> {review.text}
+        <li key={review.id} className={styles.reviewItem}>
+          <strong>{review.user}:</strong> <p>{review.text}</p>
         </li>
       ))}
     </ul>
