@@ -6,7 +6,6 @@ import { Menu } from "../menu/Menu"
 import { ReviewsForm } from "../reviewsform/ReviewsForm"
 import { DishCounter } from "../dishcounter/DishCounter"
 import styles from "./styles.module.scss"
-
 export const Restaurants = () => {
   const [activeRestaurantId, setActiveRestaurantId] = useState(
     restaurants[0]?.id,
