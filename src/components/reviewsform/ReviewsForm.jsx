@@ -1,6 +1,8 @@
 import { useReducer } from "react"
 import { Counter } from "../counter/Counter"
 import styles from "./styles.module.scss"
+import { use } from "react"
+import { UserContextName } from "../usercontext/usercontextname"
 
 const INITIAL_VALUE = {
   name: "",
@@ -58,6 +60,10 @@ export const ReviewsForm = () => {
   const clearForm = () => dispatch({ type: CLEAR_FORM_ACTION })
 
   const { name, text, rating } = form
+  const { user } = use(UserContextName)
+  if (!user) {
+    return null
+  }
 
   return (
     <div className={styles.formContainer}>
