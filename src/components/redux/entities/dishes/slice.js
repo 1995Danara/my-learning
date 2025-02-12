@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSelector, createSlice } from "@reduxjs/toolkit"
 import { normalizedDishes } from "../../../normalized-mock"
 
 const initialState = {
@@ -25,12 +25,17 @@ export const dishesSlice = createSlice({
     },
   },
   selectors: {
-    selectDishIds: (state) => state.dishes.ids,
-    selectDishById: (state, id) => state.dishes.entities[id],
-    selectDishes: (state) =>
-      state.dishes.ids.map((id) => state.dishes.entities[id]),
+    selectDishIds: (state) => state.ids,
+    selectDishById: (state, id) => state.entities[id],
+    selectDishes: createSelector(
+      (state) => state.ids,
+      (state) => state.entities,
+      (ids, entities) => ids.map((id) => entities[id]),
+    ),
   },
 })
+export const { selectDishIds, selectDishById, selectDishes } =
+  dishesSlice.selectors
 
 export const { addReview } = dishesSlice.actions
 export default dishesSlice.reducer
