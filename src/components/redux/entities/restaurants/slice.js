@@ -20,12 +20,12 @@ export const restaurantsSlice = createSlice({
       }
     },
   },
+  selectors: {
+    selectRestaurantIds: (state) => state.restaurants.ids,
+    selectRestaurantEntities: (state) => state.restaurants.entities,
+    selectRestaurantById: (state, id) => state.restaurants.entities[id],
+  },
 })
-
-export const selectRestaurantIds = (state) => state.restaurants.ids
-export const selectRestaurantEntities = (state) => state.restaurants.entities
-export const selectRestaurantById = (state, id) =>
-  state.restaurants.entities[id]
 
 export const { addReview } = restaurantsSlice.actions
 export default restaurantsSlice.reducer

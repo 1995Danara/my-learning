@@ -24,11 +24,13 @@ export const dishesSlice = createSlice({
       }
     },
   },
+  selectors: {
+    selectDishIds: (state) => state.dishes.ids,
+    selectDishById: (state, id) => state.dishes.entities[id],
+    selectDishes: (state) =>
+      state.dishes.ids.map((id) => state.dishes.entities[id]),
+  },
 })
-export const selectDishIds = (state) => state.dishes.ids
-export const selectDishById = (state, id) => state.dishes.entities[id]
-export const selectDishes = (state) =>
-  state.dishes.ids.map((id) => state.dishes.entities[id])
 
 export const { addReview } = dishesSlice.actions
 export default dishesSlice.reducer
