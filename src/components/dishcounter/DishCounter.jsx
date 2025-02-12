@@ -1,12 +1,9 @@
 import { useState } from "react"
 import { Counter } from "../counter/Counter"
 import styles from "./styles.module.scss"
-import { use } from "react"
-import { UserContextName } from "../usercontext/usercontextname"
 
-export const DishCounter = () => {
+export const DishCounter = ({ user }) => {
   const [count, setCount] = useState(0)
-  const { user } = use(UserContextName)
 
   const onIncrement = () => {
     if (count < 5) {

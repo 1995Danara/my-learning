@@ -1,21 +1,29 @@
 import { useState } from "react"
+import { useSelector, useDispatch } from "react-redux"
+import {
+  addReview,
+  selectRestaurantIds,
+  selectRestaurantEntities,
+  selectRestaurantById,
+} from "../redux/entities/restaurants/slice"
 import { Reviews } from "../reviews/Reviews"
 import { Menu } from "../menu/Menu"
 import { ReviewsForm } from "../reviewsform/ReviewsForm"
 import { DishCounter } from "../dishcounter/DishCounter"
 import styles from "./styles.module.scss"
-import { useSelector, useDispatch } from "react-redux"
-import { addReview } from "../redux/entities/restaurants/slice"
-
+import { useUser } from "../user/useUser"
 export const Restaurants = () => {
+  const { user } = useUser()
   const dispatch = useDispatch()
-  const restaurants = useSelector((state) => state.restaurants.entities)
+  const restaurantIds = useSelector(selectRestaurantIds)
+  const restaurantEntities = useSelector(selectRestaurantEntities)
 
   const [activeRestaurantId, setActiveRestaurantId] = useState(
-    Object.values(restaurants)[0]?.id || null,
+    restaurantIds[0] || null,
   )
-
-  const activeRestaurant = restaurants[activeRestaurantId]
+  const activeRestaurant = useSelector((state) =>
+    selectRestaurantById(state, activeRestaurantId),
+  )
 
   const handleTabClick = (id) => {
     if (id !== activeRestaurantId) {
@@ -31,13 +39,13 @@ export const Restaurants = () => {
 
   return (
     <div className={styles.wrapper}>
-      {Object.values(restaurants).map((restaurant) => (
+      {restaurantIds.map((id) => (
         <button
-          key={restaurant.id}
-          onClick={() => handleTabClick(restaurant.id)}
+          key={id}
+          onClick={() => handleTabClick(id)}
           className={styles.tabButton}
         >
-          {restaurant.name}
+          {restaurantEntities[id].name}
         </button>
       ))}
 
@@ -46,9 +54,9 @@ export const Restaurants = () => {
           <>
             <h1>{activeRestaurant.name}</h1>
             <Menu menu={activeRestaurant.menu} />
-            <DishCounter />
+            <DishCounter user={user} />
             <Reviews reviews={activeRestaurant.reviews} />
-            <ReviewsForm onAddReview={handleAddReview} />
+            {user && <ReviewsForm onAddReview={handleAddReview} />}
           </>
         )}
       </div>

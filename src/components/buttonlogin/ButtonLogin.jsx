@@ -1,14 +1,20 @@
-import { UserContextName } from "../usercontext/usercontextname"
-import { useContext } from "react"
 import styles from "./styles.module.scss"
-
+import { useUser } from "../user/useUser"
 export const ButtonLogin = () => {
-  const { user, login, logout } = useContext(UserContextName)
+  const { user, login, logout } = useUser()
+
+  const handleClick = () => {
+    if (user) {
+      logout()
+    } else {
+      login("UserName")
+    }
+  }
 
   return (
     <button
       className={`${styles.button} ${user ? styles.loggedIn : ""}`}
-      onClick={() => (user ? logout() : login("UserName"))}
+      onClick={handleClick}
     >
       {user ? `Привет, ${user}! Выйти` : "Войти"}
     </button>
