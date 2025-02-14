@@ -1,6 +1,7 @@
 import styles from "./styles.module.scss"
 import { useSelector } from "react-redux"
 import { selectDishes } from "../redux/entities/dishes/slice"
+
 export const Menu = ({ menu }) => {
   const dishes = useSelector(selectDishes)
   const filteredDishes = menu
