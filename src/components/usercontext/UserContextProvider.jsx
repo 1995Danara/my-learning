@@ -5,7 +5,7 @@ export const UserContextProvider = ({ children }) => {
   const [user, setUser] = useState(null)
 
   const login = useCallback(() => {
-    setUser("Dana")
+    setUser("User")
   }, [])
 
   const logout = useCallback(() => {
