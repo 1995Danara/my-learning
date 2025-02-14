@@ -1,18 +1,28 @@
 import { useState } from "react"
-
-import { restaurants } from "../mock"
+import { useSelector, useDispatch } from "react-redux"
+import {
+  addReview,
+  selectRestaurantIds,
+  selectRestaurantEntities,
+  selectRestaurantById,
+} from "../redux/entities/restaurants/slice"
 import { Reviews } from "../reviews/Reviews"
 import { Menu } from "../menu/Menu"
 import { ReviewsForm } from "../reviewsform/ReviewsForm"
 import { DishCounter } from "../dishcounter/DishCounter"
 import styles from "./styles.module.scss"
+import { useUser } from "../user/useUser"
 export const Restaurants = () => {
-  const [activeRestaurantId, setActiveRestaurantId] = useState(
-    restaurants[0]?.id,
-  )
+  const { user } = useUser()
+  const dispatch = useDispatch()
+  const restaurantIds = useSelector(selectRestaurantIds)
+  const restaurantEntities = useSelector(selectRestaurantEntities)
 
-  const activeRestaurant = restaurants.find(
-    (restaurant) => restaurant.id === activeRestaurantId,
+  const [activeRestaurantId, setActiveRestaurantId] = useState(
+    restaurantIds[0] || null,
+  )
+  const activeRestaurant = useSelector((state) =>
+    selectRestaurantById(state, activeRestaurantId),
   )
 
   const handleTabClick = (id) => {
@@ -20,29 +30,35 @@ export const Restaurants = () => {
       setActiveRestaurantId(id)
     }
   }
+
+  const handleAddReview = (review) => {
+    if (activeRestaurantId) {
+      dispatch(addReview({ restaurantId: activeRestaurantId, review }))
+    }
+  }
+
   return (
     <div className={styles.wrapper}>
-      {restaurants.map((restaurant) => (
+      {restaurantIds.map((id) => (
         <button
-          key={restaurant.id}
-          onClick={() => handleTabClick(restaurant.id)}
+          key={id}
+          onClick={() => handleTabClick(id)}
           className={styles.tabButton}
         >
-          {restaurant.name}
+          {restaurantEntities[id].name}
         </button>
       ))}
 
       <div className={styles.content}>
-        {activeRestaurant &&
-          Array.from({ length: 20 }).map((_, id) => (
-            <div key={id}>
-              <h1>{activeRestaurant.name}</h1>
-              <Menu menu={activeRestaurant.menu} />
-              <DishCounter />
-              <Reviews reviews={activeRestaurant.reviews} />
-              <ReviewsForm />
-            </div>
-          ))}
+        {activeRestaurant && (
+          <>
+            <h1>{activeRestaurant.name}</h1>
+            <Menu menu={activeRestaurant.menu} />
+            <DishCounter user={user} />
+            <Reviews reviews={activeRestaurant.reviews} />
+            {user && <ReviewsForm onAddReview={handleAddReview} />}
+          </>
+        )}
       </div>
     </div>
   )
