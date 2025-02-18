@@ -10,7 +10,7 @@ export const cartSlice = createSlice({
 
     removeFromCart: (state, { payload }) => {
       if (state[payload]) {
-        state[payload] -= 1
+        state[payload] - 1
 
         if (state[payload] <= 0) {
           delete state[payload]
@@ -22,7 +22,11 @@ export const cartSlice = createSlice({
     },
   },
 })
-export const selectorAmountById = (state, id) => state.cart[id] || 0
+
+export const selectorAmountById = (state, id) => {
+  return state.cart?.[id] || 0
+}
+
 export const { addToCart, removeFromCart } = cartSlice.actions
 const selectCartSlice = (state) => state.cart
 export const selectCartItemsIds = createSelector([selectCartSlice], (cart) =>
