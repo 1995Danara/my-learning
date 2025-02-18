@@ -1,12 +1,14 @@
 import { Outlet, NavLink, useParams } from "react-router-dom"
 import { useSelector } from "react-redux"
-import { selectRestaurantEntities } from "../../redux/entities/restaurants/slice"
+import { selectRestaurantById } from "../../redux/entities/restaurants/slice"
 import styles from "./styles.module.scss"
+import classNames from "classnames"
 
 export const RestaurantPage = () => {
   const { restaurantId } = useParams()
-  const restaurantEntities = useSelector(selectRestaurantEntities)
-  const restaurant = restaurantEntities[restaurantId]
+  const restaurant = useSelector((state) =>
+    selectRestaurantById(state, restaurantId),
+  )
 
   return (
     <div>
@@ -15,7 +17,9 @@ export const RestaurantPage = () => {
         <NavLink
           to={`/restaurants/${restaurantId}/menu`}
           className={({ isActive }) =>
-            `${styles.navLink} ${isActive ? styles.active : ""}`
+            classNames(styles.navLink, {
+              [styles.active]: isActive,
+            })
           }
         >
           Menu
@@ -23,7 +27,9 @@ export const RestaurantPage = () => {
         <NavLink
           to={`/restaurants/${restaurantId}/reviews`}
           className={({ isActive }) =>
-            `${styles.navLink} ${isActive ? styles.active : ""}`
+            classNames(styles.navLink, {
+              [styles.active]: isActive,
+            })
           }
         >
           Reviews

@@ -10,7 +10,7 @@ export const cartSlice = createSlice({
 
     removeFromCart: (state, { payload }) => {
       if (state[payload]) {
-        state[payload] - 1
+        state[payload] = state[payload] - 1
 
         if (state[payload] <= 0) {
           delete state[payload]
@@ -18,15 +18,11 @@ export const cartSlice = createSlice({
       }
     },
     selectors: {
-      selectorAmountById: (state, id) => state[id],
+      selectorAmountById: (state, id) => state[id] || 0,
     },
   },
 })
-
-export const selectorAmountById = (state, id) => {
-  return state.cart?.[id] || 0
-}
-
+export const { selectorAmountById } = cartSlice.selectors
 export const { addToCart, removeFromCart } = cartSlice.actions
 const selectCartSlice = (state) => state.cart
 export const selectCartItemsIds = createSelector([selectCartSlice], (cart) =>
