@@ -35,7 +35,6 @@ export const RestaurantPage = () => {
           Reviews
         </NavLink>
       </div>
-
       <Outlet />
     </div>
   )

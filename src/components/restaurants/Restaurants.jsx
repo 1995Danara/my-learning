@@ -3,25 +3,16 @@ import { useSelector } from "react-redux"
 import {
   selectRestaurantIds,
   selectRestaurantEntities,
-  selectRestaurantById,
 } from "../redux/entities/restaurants/slice"
-
 import styles from "./styles.module.scss"
-import { useUser } from "../user/useUser"
-
 import { NavLink, Outlet } from "react-router-dom"
 
 export const Restaurants = () => {
-  const { user } = useUser()
-
   const restaurantIds = useSelector(selectRestaurantIds)
   const restaurantEntities = useSelector(selectRestaurantEntities)
 
   const [activeRestaurantId, setActiveRestaurantId] = useState(
     restaurantIds[0] || null,
-  )
-  const activeRestaurant = useSelector((state) =>
-    selectRestaurantById(state, activeRestaurantId),
   )
 
   const handleTabClick = (id) => {
