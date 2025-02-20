@@ -23,7 +23,9 @@ export const cartSlice = createSlice({
   },
 })
 
-export const { selectorAmountById } = cartSlice.selectors
+export const selectorAmountById = (state, id) => {
+  return state.cart?.[id] || 0
+}
 
 export const { addToCart, removeFromCart } = cartSlice.actions
 const selectCartSlice = (state) => state.cart
