@@ -16,7 +16,7 @@ export const ButtonLogin = () => {
       className={`${styles.button} ${user ? styles.loggedIn : ""}`}
       onClick={handleClick}
     >
-      {user ? `Привет, ${user}! Выйти` : "Войти"}
+      {user ? `Hi, ${user}! Get out` : "Login"}
     </button>
   )
 }
