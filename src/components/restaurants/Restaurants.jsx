@@ -1,24 +1,50 @@
-import { useState } from "react"
-import { useSelector } from "react-redux"
+import { useEffect, useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
 import {
-  selectRestaurantIds,
-  selectRestaurantEntities,
+  selectGetRestaurantsRequestStatus,
+  selectRestaurantsIds,
+  selectTotalRestaurants,
 } from "../redux/entities/restaurants/slice"
+import { getRestaurants } from "../redux/entities/restaurants/getRestaurants"
+import { getRestaurantById } from "../redux/entities/restaurants/getRestaurantById"
 import styles from "./styles.module.scss"
 import { NavLink, Outlet } from "react-router-dom"
+import {
+  REQUEST_STATUS_PENDING,
+  REQUEST_STATUS_REJECTED,
+} from "../redux/constants"
 
 export const Restaurants = () => {
-  const restaurantIds = useSelector(selectRestaurantIds)
-  const restaurantEntities = useSelector(selectRestaurantEntities)
+  const dispatch = useDispatch()
+  const restaurantIds = useSelector(selectRestaurantsIds)
+  const restaurantEntities = useSelector(selectTotalRestaurants)
+  const restaurantStatus = useSelector(selectGetRestaurantsRequestStatus)
 
-  const [activeRestaurantId, setActiveRestaurantId] = useState(
-    restaurantIds[0] || null,
-  )
+  const [activeRestaurantId, setActiveRestaurantId] = useState(null)
+
+  useEffect(() => {
+    dispatch(getRestaurants())
+  }, [dispatch])
+
+  useEffect(() => {
+    if (restaurantIds.length > 0) {
+      setActiveRestaurantId(restaurantIds[0])
+    }
+  }, [restaurantIds])
 
   const handleTabClick = (id) => {
     if (id !== activeRestaurantId) {
       setActiveRestaurantId(id)
+      dispatch(getRestaurantById(id))
     }
+  }
+
+  if (restaurantStatus === REQUEST_STATUS_PENDING) {
+    return <div>Loading restaurants...</div>
+  }
+
+  if (restaurantStatus === REQUEST_STATUS_REJECTED) {
+    return <div>Failed to load restaurants.</div>
   }
 
   return (

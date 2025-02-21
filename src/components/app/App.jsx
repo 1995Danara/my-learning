@@ -36,7 +36,9 @@ export const App = () => {
                   <Route path="menu" element={<MenuPage />} />
                   <Route path="reviews" element={<ReviewsPage />} />
                 </Route>
-                <Route path="/dish/:dishId" element={<DishPage />} />
+                <Route path="/dish" element={<DishPage />}>
+                  <Route path=":dishId" element={<DishPage />} />
+                </Route>
               </Routes>
             </Layout>
           </Router>
