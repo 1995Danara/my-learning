@@ -23,19 +23,24 @@ export const Menu = ({ menu, restaurantId }) => {
     }
   }, [restaurantId, dispatch])
 
-  const filteredDishes = menu
-    .map((dishId) => dishes.find((dish) => dish?.id === dishId))
-    .filter(Boolean)
+  const filteredDishes = menu.map((dishId) =>
+    dishes.find((dish) => dish.id === dishId),
+  )
+
+  const isLoading = requestStatus === REQUEST_STATUS_PENDING
+  const isError = requestStatus === REQUEST_STATUS_REJECTED
+  const isEmpty = filteredDishes.length === 0
 
   return (
     <div className={styles.menuContainer}>
       <h3 className={styles.menuTitle}>Menu</h3>
 
-      {requestStatus === REQUEST_STATUS_PENDING && (
-        <p className={styles.loading}>Loading...</p>
-      )}
-      {requestStatus === REQUEST_STATUS_REJECTED && (
-        <p className={styles.error}>Error loading dishes</p>
+      {isLoading && <p className={styles.loading}>Loading...</p>}
+
+      {isError && <p className={styles.error}>Error loading dishes</p>}
+
+      {isEmpty && !isLoading && !isError && (
+        <p className={styles.noDishes}>No dishes available</p>
       )}
 
       <ul className={styles.menuList}>
@@ -48,10 +53,7 @@ export const Menu = ({ menu, restaurantId }) => {
                 </Link>
               </li>
             ))
-          : requestStatus !== REQUEST_STATUS_PENDING &&
-            !requestStatus === REQUEST_STATUS_REJECTED && (
-              <p className={styles.noDishes}>No dishes available</p>
-            )}
+          : null}
       </ul>
     </div>
   )
