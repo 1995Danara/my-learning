@@ -7,15 +7,18 @@ import {
 } from "../redux/constants.js"
 import {
   selectGetDishesRequestStatus,
-  selectDishes,
+  selectDishById,
 } from "../redux/entities/dishes/slice"
 import { getDishes } from "../redux/entities/dishes/getDishes.js"
 import { useEffect } from "react"
 
 export const Menu = ({ menu, restaurantId }) => {
   const dispatch = useDispatch()
-  const dishes = useSelector(selectDishes) || []
   const requestStatus = useSelector(selectGetDishesRequestStatus)
+
+  const dishes = useSelector((state) =>
+    menu.map((dishId) => selectDishById(state, dishId)),
+  )
 
   useEffect(() => {
     if (restaurantId) {
@@ -23,13 +26,9 @@ export const Menu = ({ menu, restaurantId }) => {
     }
   }, [restaurantId, dispatch])
 
-  const filteredDishes = menu.map((dishId) =>
-    dishes.find((dish) => dish.id === dishId),
-  )
-
   const isLoading = requestStatus === REQUEST_STATUS_PENDING
   const isError = requestStatus === REQUEST_STATUS_REJECTED
-  const isEmpty = filteredDishes.length === 0
+  const isEmpty = dishes.every((dish) => !dish)
 
   return (
     <div className={styles.menuContainer}>
@@ -44,16 +43,17 @@ export const Menu = ({ menu, restaurantId }) => {
       )}
 
       <ul className={styles.menuList}>
-        {filteredDishes.length > 0
-          ? filteredDishes.map((dish) => (
+        {dishes.length > 0 &&
+          dishes.map((dish) => {
+            return dish ? (
               <li key={dish.id} className={styles.menuItem}>
                 <Link to={`/dish/${dish.id}`} className={styles.dishLink}>
                   {dish.name}{" "}
                   <span className={styles.price}>${dish.price}</span>
                 </Link>
               </li>
-            ))
-          : null}
+            ) : null
+          })}
       </ul>
     </div>
   )
