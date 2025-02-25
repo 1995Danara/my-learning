@@ -1,5 +1,6 @@
 import styles from "./styles.module.scss"
 import { useSelector } from "react-redux"
+
 export const Reviews = () => {
   const reviews = useSelector((state) => state.reviews.entities)
   return (

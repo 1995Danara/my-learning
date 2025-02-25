@@ -1,24 +1,42 @@
-import { useState } from "react"
-import { useSelector } from "react-redux"
+import { useEffect } from "react"
+import { useDispatch, useSelector } from "react-redux"
 import {
-  selectRestaurantIds,
-  selectRestaurantEntities,
+  selectGetRestaurantsRequestStatus,
+  selectRestaurantsIds,
+  selectTotalRestaurants,
 } from "../redux/entities/restaurants/slice"
+import { getRestaurants } from "../redux/entities/restaurants/getRestaurants"
+import { getRestaurantById } from "../redux/entities/restaurants/getRestaurantById"
 import styles from "./styles.module.scss"
-import { NavLink, Outlet } from "react-router-dom"
+import { NavLink, Outlet, useParams } from "react-router-dom"
+import {
+  REQUEST_STATUS_PENDING,
+  REQUEST_STATUS_REJECTED,
+} from "../redux/constants"
 
 export const Restaurants = () => {
-  const restaurantIds = useSelector(selectRestaurantIds)
-  const restaurantEntities = useSelector(selectRestaurantEntities)
+  const dispatch = useDispatch()
+  const { restaurantId } = useParams()
+  const restaurantIds = useSelector(selectRestaurantsIds)
+  const restaurantEntities = useSelector(selectTotalRestaurants)
+  const restaurantStatus = useSelector(selectGetRestaurantsRequestStatus)
 
-  const [activeRestaurantId, setActiveRestaurantId] = useState(
-    restaurantIds[0] || null,
-  )
+  useEffect(() => {
+    dispatch(getRestaurants())
+  }, [dispatch])
 
-  const handleTabClick = (id) => {
-    if (id !== activeRestaurantId) {
-      setActiveRestaurantId(id)
+  useEffect(() => {
+    if (restaurantId) {
+      dispatch(getRestaurantById(restaurantId))
     }
+  }, [restaurantId, dispatch])
+
+  if (restaurantStatus === REQUEST_STATUS_PENDING) {
+    return <div>Loading restaurants...</div>
+  }
+
+  if (restaurantStatus === REQUEST_STATUS_REJECTED) {
+    return <div>Failed to load restaurants.</div>
   }
 
   return (
@@ -31,7 +49,6 @@ export const Restaurants = () => {
             className={({ isActive }) =>
               isActive ? styles.activeTab : styles.tabButton
             }
-            onClick={() => handleTabClick(id)}
           >
             {restaurantEntities[id]?.name}
           </NavLink>

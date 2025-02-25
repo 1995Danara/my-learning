@@ -9,6 +9,5 @@ export const MenuPage = () => {
   const restaurant = useSelector((state) =>
     selectRestaurantById(state, restaurantId),
   )
-
-  return <Menu menu={restaurant.menu} />
+  return <Menu menu={restaurant?.menu || []} restaurantId={restaurantId} />
 }

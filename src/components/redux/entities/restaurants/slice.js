@@ -1,37 +1,59 @@
-import { createSlice } from "@reduxjs/toolkit"
-import { normalizedRestaurants } from "../../../normalized-mock"
+import { createEntityAdapter, createSlice } from "@reduxjs/toolkit"
+import { getRestaurants } from "./getRestaurants.js"
+import {
+  REQUEST_STATUS_FULFILLED,
+  REQUEST_STATUS_IDLE,
+  REQUEST_STATUS_PENDING,
+  REQUEST_STATUS_REJECTED,
+} from "../../constants.js"
+import { getRestaurantById } from "./getRestaurantById.js"
 
-const initialState = {
-  ids: normalizedRestaurants.map(({ id }) => id),
-  entities: normalizedRestaurants.reduce((acc, item) => {
-    acc[item.id] = item
-    return acc
-  }, {}),
-}
+const entityAdapter = createEntityAdapter()
+
 export const restaurantsSlice = createSlice({
   name: "restaurants",
-  initialState,
-  reducers: {
-    addReview: (state, action) => {
-      const { restaurantId, review } = action.payload
-      const restaurant = state.entities[restaurantId]
-      if (restaurant) {
-        restaurant.reviews.push(review)
-      }
-    },
-  },
+  initialState: entityAdapter.getInitialState({
+    getRestaurantsRequestStatus: REQUEST_STATUS_IDLE,
+  }),
   selectors: {
-    selectRestaurantIds: (state) => state.ids,
-    selectRestaurantEntities: (state) => state.entities,
-    selectRestaurantById: (state, id) => state.entities[id],
+    selectGetRestaurantsRequestStatus: (state) =>
+      state.getRestaurantsRequestStatus,
+    selectGetRestaurantByIdRequestStatus: (state) =>
+      state.getRestaurantByIdRequestStatus,
   },
+  extraReducers: (builder) =>
+    builder
+      .addCase(getRestaurants.pending, (state) => {
+        state.getRestaurantsRequestStatus = REQUEST_STATUS_PENDING
+      })
+      .addCase(getRestaurants.rejected, (state) => {
+        state.getRestaurantsRequestStatus = REQUEST_STATUS_REJECTED
+      })
+      .addCase(getRestaurants.fulfilled, (state, { payload }) => {
+        entityAdapter.setAll(state, payload)
+        state.getRestaurantsRequestStatus = REQUEST_STATUS_FULFILLED
+      })
+      .addCase(getRestaurantById.pending, (state) => {
+        state.getRestaurantByIdRequestStatus = REQUEST_STATUS_PENDING
+      })
+      .addCase(getRestaurantById.rejected, (state) => {
+        state.getRestaurantByIdRequestStatus = REQUEST_STATUS_REJECTED
+      })
+      .addCase(getRestaurantById.fulfilled, (state, { payload }) => {
+        entityAdapter.addOne(state, payload)
+        state.getRestaurantByIdRequestStatus = REQUEST_STATUS_FULFILLED
+      }),
 })
 
-export const {
-  selectRestaurantIds,
-  selectRestaurantEntities,
-  selectRestaurantById,
-} = restaurantsSlice.selectors
+const selectRestaurantsSlice = (state) => state.restaurants
 
-export const { addReview } = restaurantsSlice.actions
-export default restaurantsSlice.reducer
+export const {
+  selectById: selectRestaurantById,
+  selectIds: selectRestaurantsIds,
+  selectTotal: selectTotalRestaurants,
+} = entityAdapter.getSelectors(selectRestaurantsSlice)
+
+export const {
+  selectGetRestaurantsRequestStatus,
+  selectGetRestaurantByIdRequestStatus,
+} = restaurantsSlice.selectors
