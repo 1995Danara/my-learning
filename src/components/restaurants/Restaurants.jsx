@@ -1,56 +1,25 @@
-import { useEffect } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import {
-  selectGetRestaurantsRequestStatus,
-  selectRestaurantsIds,
-  selectTotalRestaurants,
-} from "../redux/entities/restaurants/slice"
-import { getRestaurants } from "../redux/entities/restaurants/getRestaurants"
-import { getRestaurantById } from "../redux/entities/restaurants/getRestaurantById"
 import styles from "./styles.module.scss"
-import { NavLink, Outlet, useParams } from "react-router-dom"
-import {
-  REQUEST_STATUS_PENDING,
-  REQUEST_STATUS_REJECTED,
-} from "../redux/constants"
+import { NavLink, Outlet } from "react-router-dom"
+import { useGetRestaurantsQuery } from "../redux/services-api/api"
 
 export const Restaurants = () => {
-  const dispatch = useDispatch()
-  const { restaurantId } = useParams()
-  const restaurantIds = useSelector(selectRestaurantsIds)
-  const restaurantEntities = useSelector(selectTotalRestaurants)
-  const restaurantStatus = useSelector(selectGetRestaurantsRequestStatus)
+  const { data: restaurants, status } = useGetRestaurantsQuery()
 
-  useEffect(() => {
-    dispatch(getRestaurants())
-  }, [dispatch])
-
-  useEffect(() => {
-    if (restaurantId) {
-      dispatch(getRestaurantById(restaurantId))
-    }
-  }, [restaurantId, dispatch])
-
-  if (restaurantStatus === REQUEST_STATUS_PENDING) {
-    return <div>Loading restaurants...</div>
-  }
-
-  if (restaurantStatus === REQUEST_STATUS_REJECTED) {
-    return <div>Failed to load restaurants.</div>
-  }
+  if (status === "loading") return <div>Loading restaurants...</div>
+  if (status === "error") return <div>Failed to load restaurants.</div>
 
   return (
     <div className={styles.wrapper}>
       <div className={styles.tabs}>
-        {restaurantIds.map((id) => (
+        {restaurants?.map((restaurant) => (
           <NavLink
-            key={id}
-            to={`/restaurants/${id}`}
+            key={restaurant.id}
+            to={`/restaurants/${restaurant.id}`}
             className={({ isActive }) =>
               isActive ? styles.activeTab : styles.tabButton
             }
           >
-            {restaurantEntities[id]?.name}
+            {restaurant.name}
           </NavLink>
         ))}
       </div>
